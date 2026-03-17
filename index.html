@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Progress Tracker</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1d1d1d, #4a4a4a);
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #countdowns, #stats, #sessionFeed, #todo {
+            margin: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        input[type="text"], input[type="date"], input[type="number"] {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Study Progress Tracker</h1>
+    <div id="countdowns">
+        <h2>Exam Countdown</h2>
+        <div>Math Exam: <span id="math-countdown"></span></div>
+        <div>Science Exam: <span id="science-countdown"></span></div>
+        <div>History Exam: <span id="history-countdown"></span></div>
+        <div>Literature Exam: <span id="literature-countdown"></span></div>
+        <div>Art Exam: <span id="art-countdown"></span></div>
+    </div>
+    <div id="sessionLogger">
+        <h2>Session Logging Form</h2>
+        <input type="text" id="sessionName" placeholder="Session Name" />
+        <input type="number" id="sessionDuration" placeholder="Duration (minutes)" />
+        <button onclick="logSession()">Log Session</button>
+    </div>
+    <div id="todo">
+        <h2>To-Do List</h2>
+        <input type="text" id="todoItem" placeholder="New todo item" />
+        <button onclick="addTodo()">Add</button>
+        <ul id="todoList"></ul>
+    </div>
+    <div id="stats">
+        <h2>Statistics Dashboard</h2>
+        <p>Total Sessions: <span id="totalSessions">0</span></p>
+        <p>Total Study Time: <span id="totalStudyTime">0</span> minutes</p>
+    </div>
+    <div id="sessionFeed">
+        <h2>Recent Sessions</h2>
+        <ul id="recentSessions"></ul>
+    </div>
+
+    <script>
+        let sessions = [];
+
+        function logSession() {
+            const name = document.getElementById('sessionName').value;
+            const duration = document.getElementById('sessionDuration').value;
+            if (name && duration) {
+                sessions.push({ name, duration });
+                updateStats();
+                updateSessionFeed();
+                document.getElementById('sessionName').value = '';
+                document.getElementById('sessionDuration').value = '';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('totalSessions').innerText = sessions.length;
+            const totalTime = sessions.reduce((sum, session) => sum + parseInt(session.duration), 0);
+            document.getElementById('totalStudyTime').innerText = totalTime;
+        }
+
+        function updateSessionFeed() {
+            const feed = document.getElementById('recentSessions');
+            feed.innerHTML = '';
+            sessions.slice(-5).forEach(session => {
+                const li = document.createElement('li');
+                li.innerText = `${session.name} - ${session.duration} minutes`;
+                feed.appendChild(li);
+            });
+        }
+
+        function addTodo() {
+            const item = document.getElementById('todoItem').value;
+            if (item) {
+                const list = document.getElementById('todoList');
+                const li = document.createElement('li');
+                li.innerText = item;
+                list.appendChild(li);
+                document.getElementById('todoItem').value = '';
+            }
+        }
+
+        // COUNTDOWN TIMER
+        const countdowns = [
+            { name: 'Math Exam', date: '2026-03-20 09:00:00' },
+            { name: 'Science Exam', date: '2026-03-22 09:00:00' },
+            { name: 'History Exam', date: '2026-03-24 09:00:00' },
+            { name: 'Literature Exam', date: '2026-03-26 09:00:00' },
+            { name: 'Art Exam', date: '2026-03-28 09:00:00' }
+        ];
+
+        countdowns.forEach(exam => {
+            const countdownElement = document.getElementById(exam.name.toLowerCase().replace(' ', '-') + '-countdown');
+            const examDate = new Date(exam.date);
+            const interval = setInterval(() => {
+                const now = new Date();
+                const diff = examDate - now;
+                if (diff < 0) {
+                    clearInterval(interval);
+                    countdownElement.innerText = 'EXAM HAS PASSED';
+                } else {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    countdownElement.innerText = `${days}d ${hours}h ${minutes}m`;
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
