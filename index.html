@@ -3,106 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&family=DM+Sans:wght@400&display=swap" rel="stylesheet">
-    <title>Study Progress Tracker</title>
-    <style>
-        body {
-            background: linear-gradient(135deg, #5e4e78, #7a7c91);
-            font-family: 'DM Sans', sans-serif;
-            color: white;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            margin: 10px;
-            width: 80%;
-        }
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-    </style>
+    <title>Study Sanctuary Tracker</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="orb" style="width: 100px; height: 100px; top: 20%; left: 30%; background: #ff7f50;"></div>
-    <div class="orb" style="width: 150px; height: 150px; top: 60%; left: 70%; background: #6a5acd;"></div>
-    <div class="container">
-        <div class="card">
-            <h1>Study Progress Tracker</h1>
-            <form id="sessionForm">
-                <label for="subject">Subject:</label>
-                <select id="subject">
-                    <option value="Biology">Biology 🌿</option>
-                    <option value="Chemistry">Chemistry ⚗️</option>
-                    <option value="Business Studies">Business Studies 📊</option>
-                    <option value="Maths">Maths 📐</option>
-                    <option value="ESL">ESL 📝</option>
-                </select>
-                <br>
-                <label for="topic">Topic:</label>
-                <input type="text" id="topic" required>
-                <br>
-                <label for="duration">Duration (in minutes):</label>
-                <input type="number" id="duration" required>
-                <br>
-                <label for="confidence">Confidence (0-100%):</label>
-                <input type="range" id="confidence" min="0" max="100">
-                <br>
-                <label>Mood:</label>
-                <button type="button" class="mood-btn">😊</button>
-                <button type="button" class="mood-btn">😐</button>
-                <button type="button" class="mood-btn">😟</button>
-                <button type="button" class="mood-btn">😄</button>
-                <button type="button" class="mood-btn">😠</button>
-                <br>
-                <label for="notes">Notes:</label>
-                <textarea id="notes"></textarea>
-                <br>
+    <header>
+        <h1>Welcome to Your Study Sanctuary</h1>
+    </header>
+    <main>
+        <section id="exam-countdown">
+            <h2>Exam Countdown</h2>
+            <p id="countdown-timer">00 days 00 hours 00 minutes 00 seconds</p>
+        </section>
+        <section id="session-logging">
+            <h2>Session Logging</h2>
+            <form id="session-form">
+                <label for="session-title">Session Title:</label>
+                <input type="text" id="session-title" required>
+                <label for="session-duration">Duration (in minutes):</label>
+                <input type="number" id="session-duration" required>
                 <button type="submit">Log Session</button>
             </form>
-            <div id="todayTasks">
-                <h2>Today's To-Do List</h2>
-                <ul id="taskList"></ul>
-            </div>
-            <div id="stats">
-                <h2>Stats Dashboard</h2>
-                <p>Sessions Today: <span id="sessionsToday">0</span></p>
-                <p>Total Minutes: <span id="totalMinutes">0</span></p>
-                <p>Day Streak: <span id="dayStreak">0</span></p>
-                <p>Average Confidence: <span id="averageConfidence">0%</span></p>
-                <div id="subjectTimeBreakdown"></div>
-            </div>
-            <div id="recentSessions">
-                <h2>Recent Sessions</h2>
-                <ul id="recentList"></ul>
-            </div>
-        </div>
-    </div>
-    <script>
-        // JavaScript to handle form submission, localStorage, and updates
-    </script>
+            <ul id="session-list"></ul>
+        </section>
+        <section id="todo-list">
+            <h2>Todo List</h2>
+            <form id="todo-form">
+                <input type="text" id="todo-input" placeholder="Add a new task" required>
+                <button type="submit">Add</button>
+            </form>
+            <ul id="todo-list-items"></ul>
+        </section>
+        <section id="stats-dashboard">
+            <h2>Stats Dashboard</h2>
+            <p>Total Study Sessions: <span id="total-sessions">0</span></p>
+            <p>Total Time Studied: <span id="total-time">0 minutes</span></p>
+        </section>
+        <section id="recent-sessions-feed">
+            <h2>Recent Sessions</h2>
+            <ul id="recent-sessions-list"></ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Study Sanctuary. All rights reserved.</p>
+    </footer>
+    <script src="script.js"></script>
 </body>
 </html>
