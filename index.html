@@ -3,136 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&family=DM+Sans:wght@400&display=swap" rel="stylesheet">
     <title>Study Progress Tracker</title>
     <style>
         body {
-            background: linear-gradient(135deg, #1d1d1d, #4a4a4a);
+            background: linear-gradient(135deg, #5e4e78, #7a7c91);
+            font-family: 'DM Sans', sans-serif;
             color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
-        #countdowns, #stats, #sessionFeed, #todo {
-            margin: 20px;
-            padding: 20px;
-            border-radius: 10px;
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .card {
             background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            width: 80%;
         }
-        input[type="text"], input[type="date"], input[type="number"] {
-            padding: 10px;
-            margin: 5px;
-            border-radius: 5px;
-            border: none;
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            animation: float 6s ease-in-out infinite;
         }
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Study Progress Tracker</h1>
-    <div id="countdowns">
-        <h2>Exam Countdown</h2>
-        <div>Math Exam: <span id="math-countdown"></span></div>
-        <div>Science Exam: <span id="science-countdown"></span></div>
-        <div>History Exam: <span id="history-countdown"></span></div>
-        <div>Literature Exam: <span id="literature-countdown"></span></div>
-        <div>Art Exam: <span id="art-countdown"></span></div>
+    <div class="orb" style="width: 100px; height: 100px; top: 20%; left: 30%; background: #ff7f50;"></div>
+    <div class="orb" style="width: 150px; height: 150px; top: 60%; left: 70%; background: #6a5acd;"></div>
+    <div class="container">
+        <div class="card">
+            <h1>Study Progress Tracker</h1>
+            <form id="sessionForm">
+                <label for="subject">Subject:</label>
+                <select id="subject">
+                    <option value="Biology">Biology 🌿</option>
+                    <option value="Chemistry">Chemistry ⚗️</option>
+                    <option value="Business Studies">Business Studies 📊</option>
+                    <option value="Maths">Maths 📐</option>
+                    <option value="ESL">ESL 📝</option>
+                </select>
+                <br>
+                <label for="topic">Topic:</label>
+                <input type="text" id="topic" required>
+                <br>
+                <label for="duration">Duration (in minutes):</label>
+                <input type="number" id="duration" required>
+                <br>
+                <label for="confidence">Confidence (0-100%):</label>
+                <input type="range" id="confidence" min="0" max="100">
+                <br>
+                <label>Mood:</label>
+                <button type="button" class="mood-btn">😊</button>
+                <button type="button" class="mood-btn">😐</button>
+                <button type="button" class="mood-btn">😟</button>
+                <button type="button" class="mood-btn">😄</button>
+                <button type="button" class="mood-btn">😠</button>
+                <br>
+                <label for="notes">Notes:</label>
+                <textarea id="notes"></textarea>
+                <br>
+                <button type="submit">Log Session</button>
+            </form>
+            <div id="todayTasks">
+                <h2>Today's To-Do List</h2>
+                <ul id="taskList"></ul>
+            </div>
+            <div id="stats">
+                <h2>Stats Dashboard</h2>
+                <p>Sessions Today: <span id="sessionsToday">0</span></p>
+                <p>Total Minutes: <span id="totalMinutes">0</span></p>
+                <p>Day Streak: <span id="dayStreak">0</span></p>
+                <p>Average Confidence: <span id="averageConfidence">0%</span></p>
+                <div id="subjectTimeBreakdown"></div>
+            </div>
+            <div id="recentSessions">
+                <h2>Recent Sessions</h2>
+                <ul id="recentList"></ul>
+            </div>
+        </div>
     </div>
-    <div id="sessionLogger">
-        <h2>Session Logging Form</h2>
-        <input type="text" id="sessionName" placeholder="Session Name" />
-        <input type="number" id="sessionDuration" placeholder="Duration (minutes)" />
-        <button onclick="logSession()">Log Session</button>
-    </div>
-    <div id="todo">
-        <h2>To-Do List</h2>
-        <input type="text" id="todoItem" placeholder="New todo item" />
-        <button onclick="addTodo()">Add</button>
-        <ul id="todoList"></ul>
-    </div>
-    <div id="stats">
-        <h2>Statistics Dashboard</h2>
-        <p>Total Sessions: <span id="totalSessions">0</span></p>
-        <p>Total Study Time: <span id="totalStudyTime">0</span> minutes</p>
-    </div>
-    <div id="sessionFeed">
-        <h2>Recent Sessions</h2>
-        <ul id="recentSessions"></ul>
-    </div>
-
     <script>
-        let sessions = [];
-
-        function logSession() {
-            const name = document.getElementById('sessionName').value;
-            const duration = document.getElementById('sessionDuration').value;
-            if (name && duration) {
-                sessions.push({ name, duration });
-                updateStats();
-                updateSessionFeed();
-                document.getElementById('sessionName').value = '';
-                document.getElementById('sessionDuration').value = '';
-            }
-        }
-
-        function updateStats() {
-            document.getElementById('totalSessions').innerText = sessions.length;
-            const totalTime = sessions.reduce((sum, session) => sum + parseInt(session.duration), 0);
-            document.getElementById('totalStudyTime').innerText = totalTime;
-        }
-
-        function updateSessionFeed() {
-            const feed = document.getElementById('recentSessions');
-            feed.innerHTML = '';
-            sessions.slice(-5).forEach(session => {
-                const li = document.createElement('li');
-                li.innerText = `${session.name} - ${session.duration} minutes`;
-                feed.appendChild(li);
-            });
-        }
-
-        function addTodo() {
-            const item = document.getElementById('todoItem').value;
-            if (item) {
-                const list = document.getElementById('todoList');
-                const li = document.createElement('li');
-                li.innerText = item;
-                list.appendChild(li);
-                document.getElementById('todoItem').value = '';
-            }
-        }
-
-        // COUNTDOWN TIMER
-        const countdowns = [
-            { name: 'Math Exam', date: '2026-03-20 09:00:00' },
-            { name: 'Science Exam', date: '2026-03-22 09:00:00' },
-            { name: 'History Exam', date: '2026-03-24 09:00:00' },
-            { name: 'Literature Exam', date: '2026-03-26 09:00:00' },
-            { name: 'Art Exam', date: '2026-03-28 09:00:00' }
-        ];
-
-        countdowns.forEach(exam => {
-            const countdownElement = document.getElementById(exam.name.toLowerCase().replace(' ', '-') + '-countdown');
-            const examDate = new Date(exam.date);
-            const interval = setInterval(() => {
-                const now = new Date();
-                const diff = examDate - now;
-                if (diff < 0) {
-                    clearInterval(interval);
-                    countdownElement.innerText = 'EXAM HAS PASSED';
-                } else {
-                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    countdownElement.innerText = `${days}d ${hours}h ${minutes}m`;
-                }
-            }, 1000);
-        });
+        // JavaScript to handle form submission, localStorage, and updates
     </script>
 </body>
 </html>
